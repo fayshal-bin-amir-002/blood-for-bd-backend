@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import status from "http-status";
-import config from "../config";
+import config from "../../config";
 import { TErrorSources } from "../interfaces/error";
 import { ZodError } from "zod";
 import handleZodError from "../errors/handleZodError";

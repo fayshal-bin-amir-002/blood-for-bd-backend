@@ -3,7 +3,8 @@ import ApiError from "../../errors/ApiError";
 import { RegisterUserPayload } from "./user.interface";
 import status from "http-status";
 import bcrypt from "bcrypt";
-import config from "../../config";
+import config from "../../../config";
+import { jwtHelpers } from "../../../helpers/jwtHelpers";
 
 const registerUser = async (payload: RegisterUserPayload) => {
   const isUserExists = await prisma.user.findUnique({
@@ -27,7 +28,30 @@ const registerUser = async (payload: RegisterUserPayload) => {
     data: payload,
   });
 
-  return result;
+  const accessToken = jwtHelpers.generateToken(
+    {
+      phone: result.phone,
+      role: result.role,
+      isDonor: result.isDonor,
+    },
+    config.jwt.jwt_access_token_secret as string,
+    config.jwt.jwt_access_token_expires_in as string
+  );
+
+  const refreshToken = jwtHelpers.generateToken(
+    {
+      phone: result.phone,
+      role: result.role,
+      isDonor: result.isDonor,
+    },
+    config.jwt.jwt_refresh_token_secret as string,
+    config.jwt.jwt_refresh_token_expires_in as string
+  );
+
+  return {
+    accessToken,
+    refreshToken,
+  };
 };
 
 export const UserService = {
