@@ -1,20 +1,22 @@
 import jwt, { JwtPayload, SignOptions } from "jsonwebtoken";
 import { UserRole } from "../generated/prisma";
 
-interface Payload {
+export interface IJwtPayload {
   phone: string;
+  id: string;
   role: UserRole;
   isDonor: boolean;
 }
 
 const generateToken = (
-  payload: Payload,
+  payload: IJwtPayload,
   secret: string,
   expiresIn: string
 ): string => {
   const token = jwt.sign(
     {
       phone: payload.phone,
+      id: payload.id,
       role: payload.role,
       isDonor: payload.isDonor,
     },
