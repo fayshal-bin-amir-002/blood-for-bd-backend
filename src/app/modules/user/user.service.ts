@@ -7,7 +7,8 @@ import config from "../../../config";
 import { IJwtPayload, jwtHelpers } from "../../../helpers/jwtHelpers";
 import { IPaginationOptions } from "../../interfaces/pagination";
 import { calculatePagination } from "../../../helpers/paginationHelper";
-import { Prisma } from "../../../generated/prisma";
+import { Prisma, UserRole } from "../../../generated/prisma";
+import { userSearchAbleFields } from "./user.constant";
 
 const registerUser = async (payload: RegisterUserPayload) => {
   const isUserExists = await prisma.user.findUnique({
@@ -253,10 +254,118 @@ const findDonor = async (params: any, options: IPaginationOptions) => {
   };
 };
 
+const getAllUser = async (params: any, options: IPaginationOptions) => {
+  const { searchTerm, ...rawFilterData } = params;
+  const { limit, page, skip } = calculatePagination(options);
+
+  const andConditions: Prisma.UserWhereInput[] = [];
+
+  const filterData: Record<string, string | boolean> = {};
+  for (const [key, value] of Object.entries(rawFilterData)) {
+    if (value === "true") {
+      filterData[key] = true;
+    } else if (value === "false") {
+      filterData[key] = false;
+    } else {
+      filterData[key] = value as string;
+    }
+  }
+
+  if (params?.searchTerm) {
+    andConditions.push({
+      OR: userSearchAbleFields.map((field) => ({
+        [field]: {
+          contains: params?.searchTerm,
+          mode: "insensitive",
+        },
+      })),
+    });
+  }
+
+  if (Object.keys(filterData).length > 0) {
+    andConditions.push({
+      AND: Object.keys(filterData).map((key) => ({
+        [key]: {
+          equals: (filterData as any)[key],
+        },
+      })),
+    });
+  }
+
+  const whereConditions: Prisma.UserWhereInput =
+    andConditions?.length > 0 ? { AND: andConditions } : {};
+
+  const result = await prisma.user.findMany({
+    where: whereConditions,
+    skip: skip,
+    take: limit,
+    orderBy: {
+      createdAt: "desc",
+    },
+    select: {
+      id: true,
+      phone: true,
+      role: true,
+      isDonor: true,
+      isBlocked: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+
+  const total = await prisma.user.count({
+    where: whereConditions,
+  });
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
+};
+
+const roleUpdate = async (id: string, payload: { role: UserRole }) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!user) {
+    throw new ApiError(status.BAD_REQUEST, "User not exists!");
+  }
+
+  if (user.isBlocked) {
+    throw new ApiError(status.BAD_REQUEST, "User is blocked!");
+  }
+
+  const result = await prisma.user.update({
+    where: {
+      id,
+    },
+    data: {
+      role: payload.role,
+    },
+    select: {
+      id: true,
+      phone: true,
+      role: true,
+      isBlocked: true,
+    },
+  });
+
+  return result;
+};
+
 export const UserService = {
   registerUser,
   loginUser,
   refreshToken,
   createDonor,
   findDonor,
+  getAllUser,
+  roleUpdate,
 };

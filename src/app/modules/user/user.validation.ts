@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { UserRole } from "../../../generated/prisma";
 
 export const registerUserZodSchema = z.object({
   body: z.object({
@@ -43,5 +44,15 @@ export const donorZodSchema = z.object({
     last_donation_date: z.preprocess((arg) => {
       if (typeof arg == "string" || arg instanceof Date) return new Date(arg);
     }, z.date().optional()),
+  }),
+});
+
+export const roleZodSchema = z.object({
+  body: z.object({
+    role: z.nativeEnum(UserRole, {
+      errorMap: () => ({
+        message: "Role must be either 'USER' or 'ADMIN'",
+      }),
+    }),
   }),
 });

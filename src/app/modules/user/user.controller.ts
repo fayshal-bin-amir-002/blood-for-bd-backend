@@ -5,7 +5,7 @@ import { UserService } from "./user.service";
 import { IJwtPayload } from "../../../helpers/jwtHelpers";
 import config from "../../../config";
 import pick from "../../../shared/pick";
-import { donorFilterableFields } from "./user.constant";
+import { donorFilterableFields, userFilterableFields } from "./user.constant";
 
 const registerUser = catchAsync(async (req, res) => {
   const { accessToken, refreshToken } = await UserService.registerUser(
@@ -88,10 +88,35 @@ const findDonor = catchAsync(async (req, res) => {
   });
 });
 
+const getAllUser = catchAsync(async (req, res) => {
+  const filters = pick(req.query, userFilterableFields);
+  const options = pick(req.query, ["limit", "page"]);
+  const result = await UserService.getAllUser(filters, options);
+  sendResponse(res, {
+    success: true,
+    statusCode: status.CREATED,
+    message: "Users data retrived successfully",
+    data: result?.data,
+    meta: result?.meta,
+  });
+});
+
+const roleUpdate = catchAsync(async (req, res) => {
+  const result = await UserService.roleUpdate(req.params.id, req.body);
+  sendResponse(res, {
+    success: true,
+    statusCode: status.CREATED,
+    message: "User role updated successfully",
+    data: result,
+  });
+});
+
 export const UserController = {
   registerUser,
   loginUser,
   refreshToken,
   createDonor,
   findDonor,
+  getAllUser,
+  roleUpdate,
 };

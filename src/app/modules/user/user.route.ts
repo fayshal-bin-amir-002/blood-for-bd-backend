@@ -1,7 +1,11 @@
 import express from "express";
 import { UserController } from "./user.controller";
 import { validateRequest } from "../../middlewares/validateRequest";
-import { donorZodSchema, registerUserZodSchema } from "./user.validation";
+import {
+  donorZodSchema,
+  registerUserZodSchema,
+  roleZodSchema,
+} from "./user.validation";
 import auth from "../../middlewares/auth";
 import { UserRole } from "../../../generated/prisma";
 
@@ -29,5 +33,14 @@ router.post(
 );
 
 router.get("/find-donor", UserController.findDonor);
+
+router.get("/", auth(UserRole.ADMIN), UserController.getAllUser);
+
+router.patch(
+  "/update-role/:id",
+  validateRequest(roleZodSchema),
+  auth(UserRole.ADMIN),
+  UserController.roleUpdate
+);
 
 export const UserRoutes = router;
