@@ -19,6 +19,8 @@ router.post(
   UserController.loginUser
 );
 
+router.post("/refreshToken", UserController.refreshToken);
+
 router.post(
   "/donor",
   validateRequest(donorZodSchema),

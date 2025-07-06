@@ -108,6 +108,45 @@ const loginUser = async (payload: RegisterUserPayload) => {
   };
 };
 
+const refreshToken = async (token: string) => {
+  let decodedData;
+  try {
+    decodedData = jwtHelpers.verifyToken(
+      token,
+      config.jwt.jwt_refresh_token_secret as string
+    );
+  } catch (err) {
+    throw new ApiError(status.UNAUTHORIZED, "You are not authorized");
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: decodedData?.id,
+    },
+  });
+
+  if (!user) {
+    throw new ApiError(status.FORBIDDEN, "User not exists!");
+  }
+
+  if (user.isBlocked) {
+    throw new ApiError(status.FORBIDDEN, "User is blocked!");
+  }
+
+  const accessToken = jwtHelpers.generateToken(
+    {
+      phone: user.phone,
+      id: user.id,
+      role: user.role,
+      isDonor: user.isDonor,
+    },
+    config.jwt.jwt_access_token_secret as string,
+    config.jwt.jwt_access_token_expires_in as string
+  );
+
+  return accessToken;
+};
+
 const createDonor = async (user: IJwtPayload, payload: IDonor) => {
   const isUserExists = await prisma.user.findUnique({
     where: {
@@ -161,5 +200,6 @@ const createDonor = async (user: IJwtPayload, payload: IDonor) => {
 export const UserService = {
   registerUser,
   loginUser,
+  refreshToken,
   createDonor,
 };
