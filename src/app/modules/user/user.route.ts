@@ -28,4 +28,6 @@ router.post(
   UserController.createDonor
 );
 
+router.get("/find-donor", UserController.findDonor);
+
 export const UserRoutes = router;

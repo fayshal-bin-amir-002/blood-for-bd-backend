@@ -5,6 +5,9 @@ import status from "http-status";
 import bcrypt from "bcrypt";
 import config from "../../../config";
 import { IJwtPayload, jwtHelpers } from "../../../helpers/jwtHelpers";
+import { IPaginationOptions } from "../../interfaces/pagination";
+import { calculatePagination } from "../../../helpers/paginationHelper";
+import { Prisma } from "../../../generated/prisma";
 
 const registerUser = async (payload: RegisterUserPayload) => {
   const isUserExists = await prisma.user.findUnique({
@@ -197,9 +200,63 @@ const createDonor = async (user: IJwtPayload, payload: IDonor) => {
   return result;
 };
 
+const findDonor = async (params: any, options: IPaginationOptions) => {
+  const filterData = { ...params };
+  const { limit, page, skip } = calculatePagination(options);
+
+  const andConditions: Prisma.DonorWhereInput[] = [{ isActive: true }];
+
+  if (Object.keys(filterData).length > 0) {
+    andConditions.push({
+      AND: Object.keys(filterData).map((key) => ({
+        [key]: {
+          equals: (filterData as any)[key],
+        },
+      })),
+    });
+  }
+
+  const whereConditions: Prisma.DonorWhereInput =
+    andConditions?.length > 0 ? { AND: andConditions } : {};
+
+  const result = await prisma.donor.findMany({
+    where: whereConditions,
+    skip: skip,
+    take: limit,
+    orderBy: {
+      createdAt: "desc",
+    },
+    select: {
+      id: true,
+      name: true,
+      address: true,
+      contact_number: true,
+      division: true,
+      district: true,
+      sub_district: true,
+      blood_group: true,
+      last_donation_date: true,
+    },
+  });
+
+  const total = await prisma.donor.count({
+    where: whereConditions,
+  });
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
+};
+
 export const UserService = {
   registerUser,
   loginUser,
   refreshToken,
   createDonor,
+  findDonor,
 };

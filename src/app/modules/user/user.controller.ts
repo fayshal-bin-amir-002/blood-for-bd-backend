@@ -4,6 +4,8 @@ import { sendResponse } from "../../../shared/sendResponse";
 import { UserService } from "./user.service";
 import { IJwtPayload } from "../../../helpers/jwtHelpers";
 import config from "../../../config";
+import pick from "../../../shared/pick";
+import { donorFilterableFields } from "./user.constant";
 
 const registerUser = catchAsync(async (req, res) => {
   const { accessToken, refreshToken } = await UserService.registerUser(
@@ -73,9 +75,23 @@ const createDonor = catchAsync(async (req, res) => {
   });
 });
 
+const findDonor = catchAsync(async (req, res) => {
+  const filters = pick(req.query, donorFilterableFields);
+  const options = pick(req.query, ["limit", "page"]);
+  const result = await UserService.findDonor(filters, options);
+  sendResponse(res, {
+    success: true,
+    statusCode: status.CREATED,
+    message: "Donors data retrived successfully",
+    data: result?.data,
+    meta: result?.meta,
+  });
+});
+
 export const UserController = {
   registerUser,
   loginUser,
   refreshToken,
   createDonor,
+  findDonor,
 };
