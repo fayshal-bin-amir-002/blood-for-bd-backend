@@ -56,3 +56,9 @@ export const roleZodSchema = z.object({
     }),
   }),
 });
+
+export const statusZodSchema = z.object({
+  body: z.object({
+    status: z.union([z.literal("true"), z.literal("false")]),
+  }),
+});

@@ -111,6 +111,16 @@ const roleUpdate = catchAsync(async (req, res) => {
   });
 });
 
+const statusUpdate = catchAsync(async (req, res) => {
+  const result = await UserService.statusUpdate(req.params.id, req.body);
+  sendResponse(res, {
+    success: true,
+    statusCode: status.CREATED,
+    message: "User status updated successfully",
+    data: result,
+  });
+});
+
 export const UserController = {
   registerUser,
   loginUser,
@@ -119,4 +129,5 @@ export const UserController = {
   findDonor,
   getAllUser,
   roleUpdate,
+  statusUpdate,
 };

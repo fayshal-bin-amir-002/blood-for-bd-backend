@@ -360,6 +360,54 @@ const roleUpdate = async (id: string, payload: { role: UserRole }) => {
   return result;
 };
 
+const statusUpdate = async (
+  id: string,
+  payload: { status: "true" | "false" }
+) => {
+  const isUserExists = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!isUserExists) {
+    throw new ApiError(status.FORBIDDEN, "User not exists!");
+  }
+
+  const isBlocked = payload.status === "true";
+
+  const result = await prisma.$transaction(async (transactionClient) => {
+    const result = await prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        isBlocked: isBlocked,
+      },
+      select: {
+        id: true,
+        phone: true,
+        isBlocked: true,
+      },
+    });
+
+    if (isUserExists.isDonor) {
+      await transactionClient.donor.update({
+        where: {
+          user_id: isUserExists.id,
+        },
+        data: {
+          isActive: !isBlocked,
+        },
+      });
+    }
+
+    return result;
+  });
+
+  return result;
+};
+
 export const UserService = {
   registerUser,
   loginUser,
@@ -368,4 +416,5 @@ export const UserService = {
   findDonor,
   getAllUser,
   roleUpdate,
+  statusUpdate,
 };
