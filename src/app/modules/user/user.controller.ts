@@ -54,7 +54,7 @@ const refreshToken = catchAsync(async (req, res) => {
   const result = await UserService.refreshToken(refreshToken);
   sendResponse(res, {
     success: true,
-    statusCode: status.OK,
+    statusCode: status.CREATED,
     message: "Access Token generated successfully.",
     data: {
       accessToken: result,
@@ -81,7 +81,7 @@ const findDonor = catchAsync(async (req, res) => {
   const result = await UserService.findDonor(filters, options);
   sendResponse(res, {
     success: true,
-    statusCode: status.CREATED,
+    statusCode: status.OK,
     message: "Donors data retrived successfully",
     data: result?.data,
     meta: result?.meta,
@@ -94,7 +94,7 @@ const getAllUser = catchAsync(async (req, res) => {
   const result = await UserService.getAllUser(filters, options);
   sendResponse(res, {
     success: true,
-    statusCode: status.CREATED,
+    statusCode: status.OK,
     message: "Users data retrived successfully",
     data: result?.data,
     meta: result?.meta,
@@ -105,7 +105,7 @@ const roleUpdate = catchAsync(async (req, res) => {
   const result = await UserService.roleUpdate(req.params.id, req.body);
   sendResponse(res, {
     success: true,
-    statusCode: status.CREATED,
+    statusCode: status.OK,
     message: "User role updated successfully",
     data: result,
   });
@@ -115,8 +115,28 @@ const statusUpdate = catchAsync(async (req, res) => {
   const result = await UserService.statusUpdate(req.params.id, req.body);
   sendResponse(res, {
     success: true,
-    statusCode: status.CREATED,
+    statusCode: status.OK,
     message: "User status updated successfully",
+    data: result,
+  });
+});
+
+const getDonorProfile = catchAsync(async (req, res) => {
+  const result = await UserService.getDonorProfile(req.user as IJwtPayload);
+  sendResponse(res, {
+    success: true,
+    statusCode: status.OK,
+    message: "Donor profile retrived successfully",
+    data: result,
+  });
+});
+
+const updateDonorProfile = catchAsync(async (req, res) => {
+  const result = await UserService.updateDonorProfile(req.params.id, req.body);
+  sendResponse(res, {
+    success: true,
+    statusCode: status.OK,
+    message: "Donor profile updated successfully",
     data: result,
   });
 });
@@ -130,4 +150,6 @@ export const UserController = {
   getAllUser,
   roleUpdate,
   statusUpdate,
+  getDonorProfile,
+  updateDonorProfile,
 };

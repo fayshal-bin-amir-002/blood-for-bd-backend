@@ -4,6 +4,7 @@ import config from "../../config";
 import { TErrorSources } from "../interfaces/error";
 import { ZodError } from "zod";
 import handleZodError from "../errors/handleZodError";
+import { Prisma } from "../../generated/prisma";
 
 export const globalErrorHandler = (
   err: any,
@@ -16,21 +17,54 @@ export const globalErrorHandler = (
   let errorSources: TErrorSources = [
     {
       path: "",
-      message: "Something went wrong!",
+      message: message,
     },
   ];
 
+  // Zod validation error
   if (err instanceof ZodError) {
     const simplifiedError = handleZodError(err);
-    statusCode = simplifiedError?.statusCode;
-    message = simplifiedError?.message;
-    errorSources = simplifiedError?.errorSources;
+    statusCode = simplifiedError.statusCode;
+    message = simplifiedError.message;
+    errorSources = simplifiedError.errorSources;
   }
 
-  res.status(status.INTERNAL_SERVER_ERROR).json({
+  // Prisma validation error
+  else if (err instanceof Prisma.PrismaClientValidationError) {
+    statusCode = status.BAD_REQUEST;
+    message = "Prisma validation error. Check your input.";
+    const cleanedMessage = err.message.split("\n").slice(-1)[0].trim();
+    errorSources = [
+      {
+        path: "",
+        message: cleanedMessage,
+      },
+    ];
+  }
+
+  // Prisma known request error (e.g., unique constraint violation)
+  else if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    statusCode = status.BAD_REQUEST;
+    message = "Prisma request error.";
+    errorSources = [
+      {
+        path: "",
+        message: (err.meta?.cause as string) || err.message,
+      },
+    ];
+  }
+
+  // Other application-defined errors (optional)
+  else if (err.statusCode && err.message) {
+    statusCode = err.statusCode;
+    message = err.message;
+    errorSources = err.errorSources || errorSources;
+  }
+
+  res.status(statusCode).json({
     success: false,
     message,
     errorSources,
-    error: config.env === "development" ? err : "",
+    error: config.env === "development" ? err : undefined,
   });
 };

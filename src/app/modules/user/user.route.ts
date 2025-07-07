@@ -51,4 +51,17 @@ router.patch(
   UserController.statusUpdate
 );
 
+router.get(
+  "/profile",
+  auth(UserRole.ADMIN, UserRole.USER),
+  UserController.getDonorProfile
+);
+
+router.patch(
+  "/profile-update/:id",
+  validateRequest(donorZodSchema),
+  auth(UserRole.ADMIN, UserRole.USER),
+  UserController.updateDonorProfile
+);
+
 export const UserRoutes = router;

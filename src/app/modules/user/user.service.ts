@@ -408,6 +408,68 @@ const statusUpdate = async (
   return result;
 };
 
+const getDonorProfile = async (payload: IJwtPayload) => {
+  const { id } = payload;
+  const user = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!user) {
+    throw new ApiError(status.BAD_REQUEST, "User not exists!");
+  }
+
+  if (user.isBlocked) {
+    throw new ApiError(status.BAD_REQUEST, "User is blocked!");
+  }
+
+  if (!user.isDonor) {
+    throw new ApiError(status.BAD_REQUEST, "This user not a donor.");
+  }
+
+  const result = await prisma.donor.findUnique({
+    where: {
+      user_id: id,
+    },
+  });
+
+  if (!result) {
+    throw new ApiError(status.BAD_REQUEST, "Donor not exists!");
+  }
+
+  if (!result.isActive) {
+    throw new ApiError(status.BAD_REQUEST, "Donor is blocked!");
+  }
+
+  return result;
+};
+
+const updateDonorProfile = async (id: string, payload: IDonor) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!user) {
+    throw new ApiError(status.BAD_REQUEST, "User not exists!");
+  }
+
+  if (user.isBlocked) {
+    throw new ApiError(status.BAD_REQUEST, "User is blocked!");
+  }
+
+  const result = await prisma.donor.update({
+    where: {
+      user_id: id,
+    },
+    data: payload,
+  });
+
+  return result;
+};
+
 export const UserService = {
   registerUser,
   loginUser,
@@ -417,4 +479,6 @@ export const UserService = {
   getAllUser,
   roleUpdate,
   statusUpdate,
+  getDonorProfile,
+  updateDonorProfile,
 };

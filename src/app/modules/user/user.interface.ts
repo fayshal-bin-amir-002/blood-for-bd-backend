@@ -13,5 +13,5 @@ export interface IDonor {
   district: string;
   sub_district: string;
   blood_group: BloodGroup;
-  last_donation_date: Date;
+  last_donation_date: Date | null;
 }
