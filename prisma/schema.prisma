@@ -42,6 +42,7 @@ model User {
   updatedAt DateTime @updatedAt
 
   donor Donor?
+  blood_donation Blood_Donation[]
 
   @@map("users")
 }
@@ -65,4 +66,25 @@ model Donor {
   user User @relation(fields: [user_id], references: [id])
 
   @@map("donors")
+}
+
+model Blood_Donation {
+  id String @id @default(uuid())
+  user_id String @unique
+  title String
+  donation_date DateTime
+  note String?
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@map("blood_donations")
+}
+
+model Blog {
+  id String @id @default(uuid())
+  title String
+  image String
+  details String
+
+  @@map("blogs")
 }
