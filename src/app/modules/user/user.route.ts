@@ -2,7 +2,6 @@ import express from "express";
 import { UserController } from "./user.controller";
 import { validateRequest } from "../../middlewares/validateRequest";
 import {
-  donorZodSchema,
   registerUserZodSchema,
   roleZodSchema,
   statusZodSchema,
@@ -26,15 +25,6 @@ router.post(
 
 router.post("/refreshToken", UserController.refreshToken);
 
-router.post(
-  "/donor",
-  validateRequest(donorZodSchema),
-  auth(UserRole.USER),
-  UserController.createDonor
-);
-
-router.get("/find-donor", UserController.findDonor);
-
 router.get("/", auth(UserRole.ADMIN), UserController.getAllUser);
 
 router.patch(
@@ -49,19 +39,6 @@ router.patch(
   validateRequest(statusZodSchema),
   auth(UserRole.ADMIN),
   UserController.statusUpdate
-);
-
-router.get(
-  "/profile",
-  auth(UserRole.ADMIN, UserRole.USER),
-  UserController.getDonorProfile
-);
-
-router.patch(
-  "/profile-update/:id",
-  validateRequest(donorZodSchema),
-  auth(UserRole.ADMIN, UserRole.USER),
-  UserController.updateDonorProfile
 );
 
 export const UserRoutes = router;
