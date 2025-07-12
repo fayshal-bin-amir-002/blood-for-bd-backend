@@ -70,10 +70,12 @@ model Donor {
 
 model Blood_Donation {
   id String @id @default(uuid())
-  user_id String @unique
+  user_id String
   title String
   donation_date DateTime
   note String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user User @relation(fields: [user_id], references: [id])
 
@@ -85,6 +87,8 @@ model Blog {
   title String
   image String
   details String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("blogs")
 }

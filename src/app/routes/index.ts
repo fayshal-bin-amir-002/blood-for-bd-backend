@@ -1,6 +1,7 @@
 import express from "express";
 import { UserRoutes } from "../modules/user/user.route";
 import { DonorRoutes } from "../modules/donor/donor.route";
+import { BloodDonationRoutes } from "../modules/blood_donation/blood_donation.route";
 
 const router = express.Router();
 
@@ -12,6 +13,10 @@ const moduleRoutes = [
   {
     path: "/donor",
     route: DonorRoutes,
+  },
+  {
+    path: "/blood-donation",
+    route: BloodDonationRoutes,
   },
 ];
 
