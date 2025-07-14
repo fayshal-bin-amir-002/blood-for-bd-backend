@@ -7,7 +7,12 @@ import { notFoundRoute } from "./app/middlewares/notFoundRoute";
 
 const app: Application = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:3000"],
+    credentials: true,
+  })
+);
 app.use(cookieParser());
 app.use(express.json());
 
