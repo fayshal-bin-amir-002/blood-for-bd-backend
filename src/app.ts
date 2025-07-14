@@ -18,15 +18,17 @@ app.use(express.json());
 
 app.use("/api/v1", router);
 
-app.use(globalErrorHandler);
-
-app.use(notFoundRoute);
-
-app.get("/", (req: Request, res: Response) => {
+const getAController = async (req: Request, res: Response) => {
   res.send({
     status: "success",
     message: "Blood For BD server is running...",
   });
-});
+};
+
+app.get("/", getAController);
+
+app.use(globalErrorHandler);
+
+app.use(notFoundRoute);
 
 export default app;
