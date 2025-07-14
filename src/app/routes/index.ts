@@ -3,6 +3,7 @@ import { UserRoutes } from "../modules/user/user.route";
 import { DonorRoutes } from "../modules/donor/donor.route";
 import { BloodDonationRoutes } from "../modules/blood_donation/blood_donation.route";
 import { BlogRoutes } from "../modules/blog/blog.route";
+import { GalleryRoutes } from "../modules/gallery/gallery.route";
 
 const router = express.Router();
 
@@ -22,6 +23,10 @@ const moduleRoutes = [
   {
     path: "/blog",
     route: BlogRoutes,
+  },
+  {
+    path: "/gallery",
+    route: GalleryRoutes,
   },
 ];
 

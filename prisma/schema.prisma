@@ -43,6 +43,7 @@ model User {
 
   donor Donor?
   blood_donation Blood_Donation[]
+  gallery Gallery[]
 
   @@map("users")
 }
@@ -91,4 +92,16 @@ model Blog {
   updatedAt DateTime @updatedAt
 
   @@map("blogs")
+}
+
+model Gallery {
+  id String @id @default(uuid())
+  user_id String
+  name String
+  image String
+  isPublished Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [user_id], references: [id])
 }

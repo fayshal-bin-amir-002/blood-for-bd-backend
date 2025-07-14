@@ -28,8 +28,13 @@ const registerUser = async (payload: RegisterUserPayload) => {
 
   payload["password"] = hashedPassword;
 
+  const userData = {
+    ...payload,
+    role: UserRole.USER,
+  };
+
   const result = await prisma.user.create({
-    data: payload,
+    data: userData,
   });
 
   const accessToken = jwtHelpers.generateToken(
