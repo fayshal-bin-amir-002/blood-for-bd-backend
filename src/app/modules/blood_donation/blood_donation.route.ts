@@ -1,6 +1,6 @@
 import express from "express";
 import { validateRequest } from "../../middlewares/validateRequest";
-import { UserRole } from "../../../generated/prisma";
+import { UserRole } from "@prisma/client";
 import auth from "../../middlewares/auth";
 import { BloodDonationController } from "./blood_donation.controller";
 import { bloodDonationSchema } from "./blood_donation.validation";

@@ -1,4 +1,4 @@
-import { BloodGroup } from "../../../generated/prisma";
+import { BloodGroup } from "@prisma/client";
 
 export interface RegisterUserPayload {
   phone: string;

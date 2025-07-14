@@ -1,5 +1,5 @@
 import status from "http-status";
-import { Blood_Donation } from "../../../generated/prisma";
+import { Blood_Donation } from "@prisma/client";
 import { IJwtPayload } from "../../../helpers/jwtHelpers";
 import { prisma } from "../../../shared/prisma";
 import ApiError from "../../errors/ApiError";

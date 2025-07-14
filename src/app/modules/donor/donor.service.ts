@@ -5,7 +5,7 @@ import ApiError from "../../errors/ApiError";
 import { IDonor } from "../user/user.interface";
 import { IPaginationOptions } from "../../interfaces/pagination";
 import { calculatePagination } from "../../../helpers/paginationHelper";
-import { Prisma, UserRole } from "../../../generated/prisma";
+import { Prisma, UserRole } from "@prisma/client";
 
 const createDonor = async (user: IJwtPayload, payload: IDonor) => {
   const isUserExists = await prisma.user.findUnique({
@@ -37,7 +37,7 @@ const createDonor = async (user: IJwtPayload, payload: IDonor) => {
     user_id: isUserExists.id,
   };
 
-  const result = await prisma.$transaction(async (transactionClient) => {
+  const result = await prisma.$transaction(async (transactionClient: any) => {
     const result = await prisma.donor.create({
       data: donorData,
     });

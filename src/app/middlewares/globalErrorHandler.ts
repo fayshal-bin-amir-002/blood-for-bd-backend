@@ -4,7 +4,7 @@ import config from "../../config";
 import { TErrorSources } from "../interfaces/error";
 import { ZodError } from "zod";
 import handleZodError from "../errors/handleZodError";
-import { Prisma } from "../../generated/prisma";
+import { Prisma } from "@prisma/client";
 
 export const globalErrorHandler = (
   err: any,

@@ -7,7 +7,7 @@ import config from "../../../config";
 import { IJwtPayload, jwtHelpers } from "../../../helpers/jwtHelpers";
 import { IPaginationOptions } from "../../interfaces/pagination";
 import { calculatePagination } from "../../../helpers/paginationHelper";
-import { Prisma, UserRole } from "../../../generated/prisma";
+import { Prisma, UserRole } from "@prisma/client";
 import { userSearchAbleFields } from "./user.constant";
 
 const registerUser = async (payload: RegisterUserPayload) => {
@@ -278,7 +278,7 @@ const statusUpdate = async (
 
   const isBlocked = payload.status === "true";
 
-  const result = await prisma.$transaction(async (transactionClient) => {
+  const result = await prisma.$transaction(async (transactionClient: any) => {
     const result = await prisma.user.update({
       where: {
         id,

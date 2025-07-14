@@ -1,7 +1,7 @@
 import express from "express";
 import { validateRequest } from "../../middlewares/validateRequest";
 import auth from "../../middlewares/auth";
-import { UserRole } from "../../../generated/prisma";
+import { UserRole } from "@prisma/client";
 import { GalleryController } from "./gallery.controller";
 import { GallerySchema, statusZodSchema } from "./gallery.validation";
 

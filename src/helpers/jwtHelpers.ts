@@ -1,5 +1,5 @@
+import { UserRole } from "@prisma/client";
 import jwt, { JwtPayload, SignOptions } from "jsonwebtoken";
-import { UserRole } from "../generated/prisma";
 
 export interface IJwtPayload {
   phone: string;
