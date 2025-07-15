@@ -81,7 +81,7 @@ const getAllGallery = async () => {
     where: {
       isPublished: true,
     },
-    take: 20,
+    take: 16,
     orderBy: {
       createdAt: "desc",
     },

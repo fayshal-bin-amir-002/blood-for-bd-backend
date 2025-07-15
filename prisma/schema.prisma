@@ -104,3 +104,16 @@ model Gallery {
 
   user User @relation(fields: [user_id], references: [id])
 }
+
+model Testimonial {
+  id String @id @default(uuid())
+  name String
+  address String
+  message String
+  isPublished Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("testimonials")
+}
