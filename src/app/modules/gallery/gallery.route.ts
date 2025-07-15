@@ -10,7 +10,6 @@ const router = express.Router();
 router.post(
   "/",
   validateRequest(GallerySchema),
-  auth(UserRole.ADMIN, UserRole.USER),
   GalleryController.addToGallery
 );
 
@@ -23,10 +22,6 @@ router.patch(
   GalleryController.pulishStatusUpdate
 );
 
-router.delete(
-  "/:id",
-  auth(UserRole.ADMIN, UserRole.USER),
-  GalleryController.deleteGallery
-);
+router.delete("/:id", auth(UserRole.ADMIN), GalleryController.deleteGallery);
 
 export const GalleryRoutes = router;

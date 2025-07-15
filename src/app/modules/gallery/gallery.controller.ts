@@ -1,14 +1,10 @@
 import status from "http-status";
-import { IJwtPayload } from "../../../helpers/jwtHelpers";
 import { catchAsync } from "../../../shared/catchAsync";
 import { sendResponse } from "../../../shared/sendResponse";
 import { GalleryService } from "./gallery.service";
 
 const addToGallery = catchAsync(async (req, res) => {
-  const result = await GalleryService.addToGallery(
-    req.user as IJwtPayload,
-    req.body
-  );
+  const result = await GalleryService.addToGallery(req.body);
   sendResponse(res, {
     success: true,
     statusCode: status.CREATED,

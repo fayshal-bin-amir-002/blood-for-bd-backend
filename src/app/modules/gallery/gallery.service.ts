@@ -1,26 +1,10 @@
 import status from "http-status";
-import { IJwtPayload } from "../../../helpers/jwtHelpers";
 import { prisma } from "../../../shared/prisma";
 import ApiError from "../../errors/ApiError";
 import { IGallery } from "./gallery.interface";
 
-const addToGallery = async (user: IJwtPayload, payload: IGallery) => {
-  const isUserExists = await prisma.user.findUnique({
-    where: {
-      phone: user.phone,
-    },
-  });
-
-  if (!isUserExists) {
-    throw new ApiError(status.FORBIDDEN, "User not exists!");
-  }
-
-  if (isUserExists.isBlocked) {
-    throw new ApiError(status.FORBIDDEN, "User is blocked!");
-  }
-
+const addToGallery = async (payload: IGallery) => {
   const galleryData = {
-    user_id: isUserExists.id,
     ...payload,
     isPublished: false,
   };

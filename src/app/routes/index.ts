@@ -4,6 +4,7 @@ import { DonorRoutes } from "../modules/donor/donor.route";
 import { BloodDonationRoutes } from "../modules/blood_donation/blood_donation.route";
 import { BlogRoutes } from "../modules/blog/blog.route";
 import { GalleryRoutes } from "../modules/gallery/gallery.route";
+import { TestimonialRoutes } from "../modules/testimonial/testimonial.route";
 
 const router = express.Router();
 
@@ -27,6 +28,10 @@ const moduleRoutes = [
   {
     path: "/gallery",
     route: GalleryRoutes,
+  },
+  {
+    path: "/testimonial",
+    route: TestimonialRoutes,
   },
 ];
 
