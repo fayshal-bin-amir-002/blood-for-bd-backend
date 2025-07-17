@@ -1,11 +1,12 @@
 import status from "http-status";
-import { IJwtPayload } from "../../../helpers/jwtHelpers";
+import { IJwtPayload, jwtHelpers } from "../../../helpers/jwtHelpers";
 import { prisma } from "../../../shared/prisma";
 import ApiError from "../../errors/ApiError";
 import { IDonor } from "../user/user.interface";
 import { IPaginationOptions } from "../../interfaces/pagination";
 import { calculatePagination } from "../../../helpers/paginationHelper";
 import { Prisma, UserRole } from "@prisma/client";
+import config from "../../../config";
 
 const createDonor = async (user: IJwtPayload, payload: IDonor) => {
   const isUserExists = await prisma.user.findUnique({
@@ -24,12 +25,12 @@ const createDonor = async (user: IJwtPayload, payload: IDonor) => {
 
   const isDonorExists = await prisma.donor.findUnique({
     where: {
-      id: isUserExists.id,
+      user_id: isUserExists.id,
     },
   });
 
   if (isDonorExists) {
-    throw new ApiError(status.BAD_REQUEST, "User is already a donor.");
+    throw new ApiError(status.BAD_REQUEST, "You are already a donor.");
   }
 
   const donorData = {
@@ -37,12 +38,12 @@ const createDonor = async (user: IJwtPayload, payload: IDonor) => {
     user_id: isUserExists.id,
   };
 
-  const result = await prisma.$transaction(async (transactionClient: any) => {
-    const result = await prisma.donor.create({
+  const res = await prisma.$transaction(async (transactionClient: any) => {
+    await prisma.donor.create({
       data: donorData,
     });
 
-    await transactionClient.user.update({
+    const res = await transactionClient.user.update({
       where: {
         id: isUserExists.id,
       },
@@ -50,11 +51,35 @@ const createDonor = async (user: IJwtPayload, payload: IDonor) => {
         isDonor: true,
       },
     });
-
-    return result;
+    return res;
   });
 
-  return result;
+  const accessToken = jwtHelpers.generateToken(
+    {
+      phone: res.phone,
+      id: res.id,
+      role: res.role,
+      isDonor: res.isDonor,
+    },
+    config.jwt.jwt_access_token_secret as string,
+    config.jwt.jwt_access_token_expires_in as string
+  );
+
+  const refreshToken = jwtHelpers.generateToken(
+    {
+      phone: res.phone,
+      id: res.id,
+      role: res.role,
+      isDonor: res.isDonor,
+    },
+    config.jwt.jwt_refresh_token_secret as string,
+    config.jwt.jwt_refresh_token_expires_in as string
+  );
+
+  return {
+    accessToken,
+    refreshToken,
+  };
 };
 
 const findDonor = async (params: any, options: IPaginationOptions) => {

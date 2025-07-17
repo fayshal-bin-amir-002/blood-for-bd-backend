@@ -12,7 +12,7 @@ export const registerUserZodSchema = z.object({
     password: z
       .string()
       .trim()
-      .length(6, { message: "Password must be exactly 6 characters long." }),
+      .min(6, { message: "Password must be minimum 6 characters long." }),
   }),
 });
 

@@ -24,6 +24,7 @@ const registerUser = catchAsync(async (req, res) => {
     message: "User registered successfully.",
     data: {
       accessToken,
+      refreshToken,
     },
   });
 });
@@ -44,6 +45,7 @@ const loginUser = catchAsync(async (req, res) => {
     message: "User login successfully.",
     data: {
       accessToken,
+      refreshToken,
     },
   });
 });

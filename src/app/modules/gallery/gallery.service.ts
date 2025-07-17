@@ -73,9 +73,19 @@ const getAllGallery = async () => {
   return result;
 };
 
+const getAllGalleryByAdmin = async () => {
+  const result = await prisma.gallery.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  return result;
+};
+
 export const GalleryService = {
   addToGallery,
   pulishStatusUpdate,
   deleteGallery,
   getAllGallery,
+  getAllGalleryByAdmin,
 };

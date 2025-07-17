@@ -16,7 +16,6 @@ const createBlog = async (payload: IBlog) => {
 const getAllBlogs = async (options: IPaginationOptions) => {
   options = {
     ...options,
-    limit: 8,
   };
   const { limit, page, skip } = calculatePagination(options);
   const result = await prisma.blog.findMany({

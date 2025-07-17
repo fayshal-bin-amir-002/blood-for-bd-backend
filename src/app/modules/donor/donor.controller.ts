@@ -5,17 +5,29 @@ import { sendResponse } from "../../../shared/sendResponse";
 import { DonorService } from "./donor.service";
 import pick from "../../../shared/pick";
 import { donorFilterableFields } from "./donor.constant";
+import config from "../../../config";
 
 const createDonor = catchAsync(async (req, res) => {
-  const result = await DonorService.createDonor(
+  const { accessToken, refreshToken } = await DonorService.createDonor(
     req.user as IJwtPayload,
     req.body
   );
+
+  res.cookie("refreshToken", refreshToken, {
+    secure: config.env === "production",
+    httpOnly: true,
+    sameSite: config.env === "production" ? "none" : "strict",
+    maxAge: 1000 * 60 * 60 * 24 * 30,
+  });
+
   sendResponse(res, {
     success: true,
     statusCode: status.CREATED,
-    message: "Donor created successfully",
-    data: result,
+    message: "Congrats! You are a donor from now.",
+    data: {
+      accessToken,
+      refreshToken,
+    },
   });
 });
 

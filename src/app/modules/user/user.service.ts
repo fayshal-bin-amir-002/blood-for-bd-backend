@@ -1,10 +1,10 @@
 import { prisma } from "../../../shared/prisma";
 import ApiError from "../../errors/ApiError";
-import { IDonor, RegisterUserPayload } from "./user.interface";
+import { RegisterUserPayload } from "./user.interface";
 import status from "http-status";
 import bcrypt from "bcrypt";
 import config from "../../../config";
-import { IJwtPayload, jwtHelpers } from "../../../helpers/jwtHelpers";
+import { jwtHelpers } from "../../../helpers/jwtHelpers";
 import { IPaginationOptions } from "../../interfaces/pagination";
 import { calculatePagination } from "../../../helpers/paginationHelper";
 import { Prisma, UserRole } from "@prisma/client";
@@ -73,7 +73,7 @@ const loginUser = async (payload: RegisterUserPayload) => {
   });
 
   if (!user) {
-    throw new ApiError(status.BAD_REQUEST, "User not exists!");
+    throw new ApiError(status.BAD_REQUEST, "Please register first!");
   }
 
   if (user.isBlocked) {
