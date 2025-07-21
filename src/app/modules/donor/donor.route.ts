@@ -3,7 +3,11 @@ import { validateRequest } from "../../middlewares/validateRequest";
 
 import auth from "../../middlewares/auth";
 import { UserRole } from "@prisma/client";
-import { donorZodSchema } from "./donor.validation";
+import {
+  donorZodSchema,
+  locationZodSchema,
+  profileZodSchema,
+} from "./donor.validation";
 import { DonorController } from "./donor.controller";
 import { statusZodSchema } from "../user/user.validation";
 
@@ -26,9 +30,16 @@ router.get(
 
 router.patch(
   "/profile-update",
-  validateRequest(donorZodSchema),
+  validateRequest(profileZodSchema),
   auth(UserRole.ADMIN, UserRole.USER),
   DonorController.updateDonorProfile
+);
+
+router.patch(
+  "/location-update",
+  validateRequest(locationZodSchema),
+  auth(UserRole.ADMIN, UserRole.USER),
+  DonorController.updateDonorLocation
 );
 
 router.patch(

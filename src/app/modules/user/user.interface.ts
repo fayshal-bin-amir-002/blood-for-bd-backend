@@ -15,3 +15,16 @@ export interface IDonor {
   blood_group: BloodGroup;
   last_donation_date: Date | null;
 }
+export interface IDonorProfile {
+  name: string;
+  contact_number: string;
+  blood_group: BloodGroup;
+  last_donation_date: Date | null;
+}
+
+export interface IDonorLocation {
+  address: string;
+  division: string;
+  district: string;
+  sub_district: string;
+}

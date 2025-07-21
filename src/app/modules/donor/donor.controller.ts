@@ -67,6 +67,19 @@ const updateDonorProfile = catchAsync(async (req, res) => {
   });
 });
 
+const updateDonorLocation = catchAsync(async (req, res) => {
+  const result = await DonorService.updateDonorLocation(
+    req.user as IJwtPayload,
+    req.body
+  );
+  sendResponse(res, {
+    success: true,
+    statusCode: status.OK,
+    message: "Donor location updated successfully",
+    data: result,
+  });
+});
+
 const updateDonarActiveStatus = catchAsync(async (req, res) => {
   const result = await DonorService.updateDonarActiveStatus(
     req.user as IJwtPayload,
@@ -86,4 +99,5 @@ export const DonorController = {
   getDonorProfile,
   updateDonorProfile,
   updateDonarActiveStatus,
+  updateDonorLocation,
 };

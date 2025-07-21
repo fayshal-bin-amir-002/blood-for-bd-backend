@@ -2,7 +2,7 @@ import status from "http-status";
 import { IJwtPayload, jwtHelpers } from "../../../helpers/jwtHelpers";
 import { prisma } from "../../../shared/prisma";
 import ApiError from "../../errors/ApiError";
-import { IDonor } from "../user/user.interface";
+import { IDonor, IDonorLocation, IDonorProfile } from "../user/user.interface";
 import { IPaginationOptions } from "../../interfaces/pagination";
 import { calculatePagination } from "../../../helpers/paginationHelper";
 import { Prisma, UserRole } from "@prisma/client";
@@ -172,7 +172,63 @@ const getDonorProfile = async (payload: IJwtPayload) => {
   return result;
 };
 
-const updateDonorProfile = async (user: IJwtPayload, payload: IDonor) => {
+const updateDonorProfile = async (
+  user: IJwtPayload,
+  payload: IDonorProfile
+) => {
+  const isUserExists = await prisma.user.findUnique({
+    where: {
+      id: user.id,
+    },
+  });
+
+  if (!isUserExists) {
+    throw new ApiError(status.BAD_REQUEST, "User not exists!");
+  }
+
+  if (isUserExists.isBlocked) {
+    throw new ApiError(status.BAD_REQUEST, "User is blocked!");
+  }
+
+  const isDonorExists = await prisma.donor.findUnique({
+    where: {
+      user_id: isUserExists.id,
+    },
+  });
+
+  if (!isDonorExists) {
+    throw new ApiError(status.FORBIDDEN, "Donor not found!");
+  }
+
+  const result = await prisma.donor.update({
+    where: {
+      user_id: isUserExists.id,
+    },
+    data: payload,
+    select: {
+      id: true,
+      user_id: true,
+      name: true,
+      address: true,
+      contact_number: true,
+      division: true,
+      district: true,
+      sub_district: true,
+      blood_group: true,
+      last_donation_date: true,
+      isActive: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+
+  return result;
+};
+
+const updateDonorLocation = async (
+  user: IJwtPayload,
+  payload: IDonorLocation
+) => {
   const isUserExists = await prisma.user.findUnique({
     where: {
       id: user.id,
@@ -287,4 +343,5 @@ export const DonorService = {
   getDonorProfile,
   updateDonorProfile,
   updateDonarActiveStatus,
+  updateDonorLocation,
 };
