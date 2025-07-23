@@ -15,6 +15,12 @@ router.post(
 
 router.get("/", TestimonialController.getAllTestimonial);
 
+router.get(
+  "/admin",
+  auth(UserRole.ADMIN),
+  TestimonialController.getAllTestimonialByAdmin
+);
+
 router.patch(
   "/:id",
   validateRequest(statusZodSchema),

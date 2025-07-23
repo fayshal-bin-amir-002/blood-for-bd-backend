@@ -2,6 +2,8 @@ import status from "http-status";
 import { prisma } from "../../../shared/prisma";
 import ApiError from "../../errors/ApiError";
 import { IGallery } from "./gallery.interface";
+import { IPaginationOptions } from "../../interfaces/pagination";
+import { calculatePagination } from "../../../helpers/paginationHelper";
 
 const addToGallery = async (payload: IGallery) => {
   const galleryData = {
@@ -73,13 +75,29 @@ const getAllGallery = async () => {
   return result;
 };
 
-const getAllGalleryByAdmin = async () => {
+const getAllGalleryByAdmin = async (options: IPaginationOptions) => {
+  options = {
+    ...options,
+  };
+  const { limit, page, skip } = calculatePagination(options);
   const result = await prisma.gallery.findMany({
+    skip: skip,
+    take: limit,
     orderBy: {
       createdAt: "desc",
     },
   });
-  return result;
+
+  const total = await prisma.gallery.count();
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
 };
 
 export const GalleryService = {

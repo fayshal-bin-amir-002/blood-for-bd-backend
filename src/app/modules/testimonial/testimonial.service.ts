@@ -2,6 +2,8 @@ import status from "http-status";
 import { prisma } from "../../../shared/prisma";
 import ApiError from "../../errors/ApiError";
 import { ITestimonial } from "./testimonial.interface";
+import { calculatePagination } from "../../../helpers/paginationHelper";
+import { IPaginationOptions } from "../../interfaces/pagination";
 
 const addToTestimonial = async (payload: ITestimonial) => {
   const testimonialData = {
@@ -65,7 +67,7 @@ const getAllTestimonial = async () => {
     where: {
       isPublished: true,
     },
-    take: 16,
+    take: 10,
     orderBy: {
       createdAt: "desc",
     },
@@ -73,9 +75,35 @@ const getAllTestimonial = async () => {
   return result;
 };
 
+const getAllTestimonialByAdmin = async (options: IPaginationOptions) => {
+  options = {
+    ...options,
+  };
+  const { limit, page, skip } = calculatePagination(options);
+  const result = await prisma.testimonial.findMany({
+    skip: skip,
+    take: limit,
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  const total = await prisma.testimonial.count();
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
+};
+
 export const TestimonialService = {
   addToTestimonial,
   pulishStatusUpdate,
   deleteTestimonial,
   getAllTestimonial,
+  getAllTestimonialByAdmin,
 };

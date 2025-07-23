@@ -15,6 +15,12 @@ router.post(
 
 router.get("/", GalleryController.getAllGallery);
 
+router.get(
+  "/admin",
+  auth(UserRole.ADMIN),
+  GalleryController.getAllGalleryByAdmin
+);
+
 router.patch(
   "/:id",
   validateRequest(statusZodSchema),

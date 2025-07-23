@@ -2,6 +2,7 @@ import status from "http-status";
 import { catchAsync } from "../../../shared/catchAsync";
 import { sendResponse } from "../../../shared/sendResponse";
 import { TestimonialService } from "./testimonial.service";
+import pick from "../../../shared/pick";
 
 const addToTestimonial = catchAsync(async (req, res) => {
   const result = await TestimonialService.addToTestimonial(req.body);
@@ -46,9 +47,22 @@ const getAllTestimonial = catchAsync(async (req, res) => {
   });
 });
 
+const getAllTestimonialByAdmin = catchAsync(async (req, res) => {
+  const options = pick(req.query, ["limit", "page"]);
+  const result = await TestimonialService.getAllTestimonialByAdmin(options);
+  sendResponse(res, {
+    success: true,
+    statusCode: status.OK,
+    message: "Testimonial photo retrived successfully",
+    data: result?.data,
+    meta: result?.meta,
+  });
+});
+
 export const TestimonialController = {
   addToTestimonial,
   pulishStatusUpdate,
   deleteTestimonial,
   getAllTestimonial,
+  getAllTestimonialByAdmin,
 };
