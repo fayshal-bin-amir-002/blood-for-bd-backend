@@ -1,15 +1,10 @@
-import { UserRole } from "@prisma/client";
 import { prisma } from "../../../shared/prisma";
 import { monthNames } from "./meta.constant";
 
 const getImpactData = async () => {
   const totalLivesSaved = await prisma.blood_Donation.count();
   const totalDonors = await prisma.donor.count();
-  const registeredUsers = await prisma.user.count({
-    where: {
-      role: UserRole.USER,
-    },
-  });
+  const registeredUsers = await prisma.user.count();
   const activeDonors = await prisma.donor.count({
     where: {
       isActive: true,
