@@ -16,7 +16,7 @@ const router = express.Router();
 router.post(
   "/",
   validateRequest(donorZodSchema),
-  auth(UserRole.USER),
+  auth(UserRole.USER, UserRole.ADMIN),
   DonorController.createDonor
 );
 
@@ -45,7 +45,7 @@ router.patch(
 router.patch(
   "/profile-update/status",
   validateRequest(statusZodSchema),
-  auth(UserRole.USER),
+  auth(UserRole.USER, UserRole.ADMIN),
   DonorController.updateDonarActiveStatus
 );
 
