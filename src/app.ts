@@ -9,7 +9,7 @@ const app: Application = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: ["https://blood-for-bd.vercel.app"],
     credentials: true,
   })
 );
