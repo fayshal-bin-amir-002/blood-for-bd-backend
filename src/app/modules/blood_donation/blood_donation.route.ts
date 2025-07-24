@@ -10,26 +10,26 @@ const router = express.Router();
 router.post(
   "/",
   validateRequest(bloodDonationSchema),
-  auth(UserRole.USER),
+  auth(UserRole.USER, UserRole.ADMIN),
   BloodDonationController.createBloodDonation
 );
 
 router.get(
   "/",
-  auth(UserRole.USER),
+  auth(UserRole.USER, UserRole.ADMIN),
   BloodDonationController.getAllBloodDonation
 );
 
 router.patch(
   "/:id",
   validateRequest(bloodDonationSchema),
-  auth(UserRole.USER),
+  auth(UserRole.USER, UserRole.ADMIN),
   BloodDonationController.updateBloodDonation
 );
 
 router.delete(
   "/:id",
-  auth(UserRole.USER),
+  auth(UserRole.USER, UserRole.ADMIN),
   BloodDonationController.deleteBloodDonation
 );
 
