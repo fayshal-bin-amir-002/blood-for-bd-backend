@@ -5,6 +5,7 @@ import { BloodDonationRoutes } from "../modules/blood_donation/blood_donation.ro
 import { BlogRoutes } from "../modules/blog/blog.route";
 import { GalleryRoutes } from "../modules/gallery/gallery.route";
 import { TestimonialRoutes } from "../modules/testimonial/testimonial.route";
+import { MetaRoutes } from "../modules/meta/meta.route";
 
 const router = express.Router();
 
@@ -32,6 +33,10 @@ const moduleRoutes = [
   {
     path: "/testimonial",
     route: TestimonialRoutes,
+  },
+  {
+    path: "/meta",
+    route: MetaRoutes,
   },
 ];
 
