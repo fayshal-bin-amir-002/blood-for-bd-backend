@@ -2,7 +2,6 @@ import status from "http-status";
 import { catchAsync } from "../../../shared/catchAsync";
 import { sendResponse } from "../../../shared/sendResponse";
 import { UserService } from "./user.service";
-import config from "../../../config";
 import pick from "../../../shared/pick";
 import { userFilterableFields } from "./user.constant";
 
@@ -10,13 +9,6 @@ const registerUser = catchAsync(async (req, res) => {
   const { accessToken, refreshToken } = await UserService.registerUser(
     req.body
   );
-
-  res.cookie("refreshToken", refreshToken, {
-    secure: config.env === "production",
-    httpOnly: true,
-    sameSite: config.env === "production" ? "none" : "strict",
-    maxAge: 1000 * 60 * 60 * 24 * 30,
-  });
 
   sendResponse(res, {
     success: true,
@@ -32,13 +24,6 @@ const registerUser = catchAsync(async (req, res) => {
 const loginUser = catchAsync(async (req, res) => {
   const { accessToken, refreshToken } = await UserService.loginUser(req.body);
 
-  res.cookie("refreshToken", refreshToken, {
-    secure: config.env === "production",
-    httpOnly: true,
-    sameSite: config.env === "production" ? "none" : "strict",
-    maxAge: 1000 * 60 * 60 * 24 * 30,
-  });
-
   sendResponse(res, {
     success: true,
     statusCode: status.OK,
@@ -51,8 +36,8 @@ const loginUser = catchAsync(async (req, res) => {
 });
 
 const refreshToken = catchAsync(async (req, res) => {
-  const { refreshToken } = req.cookies;
-  const result = await UserService.refreshToken(refreshToken);
+  const token = req.headers.authorization;
+  const result = await UserService.refreshToken(token as string);
   sendResponse(res, {
     success: true,
     statusCode: status.CREATED,
