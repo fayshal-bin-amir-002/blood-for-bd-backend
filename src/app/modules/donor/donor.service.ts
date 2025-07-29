@@ -84,7 +84,8 @@ const createDonor = async (user: IJwtPayload, payload: IDonor) => {
 
 const findDonor = async (params: any, options: IPaginationOptions) => {
   const filterData = { ...params };
-  const { limit, page, skip } = calculatePagination(options);
+  const { page, skip } = calculatePagination(options);
+  const limit = 12;
 
   const andConditions: Prisma.DonorWhereInput[] = [{ isActive: true }];
 
