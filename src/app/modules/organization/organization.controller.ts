@@ -54,7 +54,8 @@ const joinOrganization = catchAsync(async (req, res) => {
 const approveMemberRequest = catchAsync(async (req, res) => {
   const result = await OrganizationService.approveMemberRequest(
     req.user as IJwtPayload,
-    req.params.memberId
+    req.params.memberId,
+    req.body
   );
 
   sendResponse(res, {
@@ -79,10 +80,89 @@ const leaveOrganization = catchAsync(async (req, res) => {
   });
 });
 
+const getAllOrganizationsByAdmin = catchAsync(async (req, res) => {
+  const filters = pick(req.query, ['status', 'division', 'district']);
+  const options = pick(req.query, ['limit', 'page']);
+  const result = await OrganizationService.getAllOrganizationsByAdmin(
+    filters,
+    options
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: status.OK,
+    message: 'All organizations retrieved by admin successfully',
+    meta: result.meta,
+    data: result.data,
+  });
+});
+
+const changeOrganizationStatus = catchAsync(async (req, res) => {
+  const result = await OrganizationService.changeOrganizationStatus(
+    req.params.id,
+    req.body
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: status.OK,
+    message: 'Organization status updated successfully',
+    data: result,
+  });
+});
+
+const getSingleOrganization = catchAsync(async (req, res) => {
+  const result = await OrganizationService.getSingleOrganization(
+    req.user as IJwtPayload,
+    req.params.id
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: status.OK,
+    message: 'Organization details retrieved successfully',
+    data: result,
+  });
+});
+
+const getOrganizationMembers = catchAsync(async (req, res) => {
+  const result = await OrganizationService.getOrganizationMembers(
+    req.user as IJwtPayload,
+    req.params.id
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: status.OK,
+    message: 'Member list retrieved successfully',
+    data: result,
+  });
+});
+
+const updateMemberRole = catchAsync(async (req, res) => {
+  const result = await OrganizationService.updateMemberRole(
+    req.user as IJwtPayload,
+    req.params.memberId,
+    req.body
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: status.OK,
+    message: 'Member role updated successfully',
+    data: result,
+  });
+});
+
 export const OrganizationController = {
   createOrganization,
   getAllOrganizations,
   joinOrganization,
   approveMemberRequest,
   leaveOrganization,
+  getAllOrganizationsByAdmin,
+  changeOrganizationStatus,
+  getSingleOrganization,
+  getOrganizationMembers,
+  updateMemberRole,
 };

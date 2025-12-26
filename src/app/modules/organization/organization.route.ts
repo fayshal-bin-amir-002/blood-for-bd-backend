@@ -35,4 +35,35 @@ router.delete(
   OrganizationController.leaveOrganization
 );
 
+router.patch(
+  '/admin/update-status/:id',
+  auth(UserRole.ADMIN),
+  OrganizationController.changeOrganizationStatus
+);
+
+router.get(
+  '/admin/all-organizations',
+  auth(UserRole.ADMIN),
+  OrganizationController.getAllOrganizationsByAdmin
+);
+
+router.get(
+  '/:id',
+  auth(UserRole.USER, UserRole.ADMIN),
+  OrganizationController.getSingleOrganization
+);
+
+router.get(
+  '/:id/members',
+  auth(UserRole.USER, UserRole.ADMIN),
+  OrganizationController.getOrganizationMembers
+);
+
+router.patch(
+  '/update-member-role/:memberId',
+  auth(UserRole.USER, UserRole.ADMIN),
+  validateRequest(OrganizationValidation.updateMemberRoleZodSchema),
+  OrganizationController.updateMemberRole
+);
+
 export const OrganizationRoutes = router;

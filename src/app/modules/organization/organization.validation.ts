@@ -41,8 +41,17 @@ export const memberStatusUpdateZodSchema = z.object({
   }),
 });
 
+export const updateMemberRoleZodSchema = z.object({
+  body: z.object({
+    role: z.enum(['ADMIN', 'MODERATOR', 'MEMBER'], {
+      required_error: 'Role is required',
+    }),
+  }),
+});
+
 export const OrganizationValidation = {
   createOrganizationZodSchema,
   updateOrganizationZodSchema,
   memberStatusUpdateZodSchema,
+  updateMemberRoleZodSchema,
 };
