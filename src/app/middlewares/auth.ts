@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from "express";
-import { jwtHelpers } from "../../helpers/jwtHelpers";
-import config from "../../config";
-import status from "http-status";
-import ApiError from "../errors/ApiError";
+import { NextFunction, Request, Response } from 'express';
+import { jwtHelpers } from '../../helpers/jwtHelpers';
+import config from '../../config';
+import status from 'http-status';
+import ApiError from '../errors/ApiError';
 
 const auth = (...roles: string[]) => {
   return async (
@@ -14,7 +14,7 @@ const auth = (...roles: string[]) => {
       const token = req.headers.authorization;
 
       if (!token) {
-        throw new ApiError(status.UNAUTHORIZED, "You are not authorized");
+        throw new ApiError(status.UNAUTHORIZED, 'You are not authorized');
       }
 
       const verifiedUser = jwtHelpers.verifyToken(
@@ -25,7 +25,7 @@ const auth = (...roles: string[]) => {
       req.user = verifiedUser;
 
       if (roles.length && !roles.includes(verifiedUser?.role)) {
-        throw new ApiError(status.FORBIDDEN, "Forbidden access");
+        throw new ApiError(status.FORBIDDEN, 'Forbidden access');
       }
 
       next();
