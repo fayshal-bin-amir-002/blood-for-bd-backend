@@ -102,11 +102,6 @@ const getAllOrganizations = async (
     take: limit,
     orderBy: { createdAt: 'desc' },
     include: {
-      members: {
-        where: {
-          status: 'JOINED',
-        },
-      },
       _count: {
         select: {
           members: {

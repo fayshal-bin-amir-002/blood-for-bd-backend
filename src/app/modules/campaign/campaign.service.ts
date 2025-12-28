@@ -51,10 +51,59 @@ const getAllCampaigns = async (params: any, options: IPaginationOptions) => {
     skip,
     take: limit,
     orderBy: { createdAt: 'desc' },
-    include: { organization: true },
+    include: {
+      organization: {
+        select: {
+          id: true,
+          name: true,
+          logo: true,
+          division: true,
+          district: true,
+        },
+      },
+    },
   });
 
   const total = await prisma.campaign.count({ where: whereConditions });
+
+  return {
+    meta: { page, limit, total },
+    data: result,
+  };
+};
+
+const getCampaignsByOrganization = async (
+  organizationId: string,
+  options: IPaginationOptions
+) => {
+  const { page, skip } = calculatePagination(options);
+  const limit = options.limit || 10;
+
+  const result = await prisma.campaign.findMany({
+    where: {
+      organization_id: organizationId,
+    },
+    skip,
+    take: limit,
+    orderBy: { createdAt: 'desc' },
+    include: {
+      organization: {
+        select: {
+          id: true,
+          name: true,
+          logo: true,
+          division: true,
+          district: true,
+        },
+      },
+    },
+  });
+
+  const total = await prisma.campaign.count({
+    where: {
+      organization_id: organizationId,
+    },
+  });
 
   return {
     meta: { page, limit, total },
@@ -83,8 +132,34 @@ const deleteCampaign = async (user: IJwtPayload, id: string) => {
   return await prisma.campaign.delete({ where: { id } });
 };
 
+const getSingleCampaign = async (id: string) => {
+  const result = await prisma.campaign.findUnique({
+    where: { id },
+    include: {
+      organization: {
+        select: {
+          id: true,
+          name: true,
+          logo: true,
+          division: true,
+          district: true,
+          contact_number: true, // ক্যাম্পেইন নিয়ে যোগাযোগ করার জন্য এটি যোগ করা হয়েছে
+        },
+      },
+    },
+  });
+
+  if (!result) {
+    throw new ApiError(status.NOT_FOUND, 'Campaign not found');
+  }
+
+  return result;
+};
+
 export const CampaignService = {
   createCampaign,
   getAllCampaigns,
   deleteCampaign,
+  getCampaignsByOrganization,
+  getSingleCampaign,
 };

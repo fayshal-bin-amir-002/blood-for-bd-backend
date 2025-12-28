@@ -16,10 +16,14 @@ router.post(
 
 router.get('/', CampaignController.getAllCampaigns);
 
+router.get('/:id', CampaignController.getSingleCampaign);
+
 router.delete(
   '/:id',
   auth(UserRole.USER, UserRole.ADMIN),
   CampaignController.deleteCampaign
 );
+
+router.get('/organization/:id', CampaignController.getCampaignsByOrganization);
 
 export const CampaignRoutes = router;

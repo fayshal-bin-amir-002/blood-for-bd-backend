@@ -33,6 +33,17 @@ const getAllCampaigns = catchAsync(async (req, res) => {
   });
 });
 
+const getSingleCampaign = catchAsync(async (req, res) => {
+  const result = await CampaignService.getSingleCampaign(req.params.id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: status.OK,
+    message: 'Campaign details retrieved successfully',
+    data: result,
+  });
+});
+
 const deleteCampaign = catchAsync(async (req, res) => {
   const result = await CampaignService.deleteCampaign(
     req.user as IJwtPayload,
@@ -47,8 +58,28 @@ const deleteCampaign = catchAsync(async (req, res) => {
   });
 });
 
+const getCampaignsByOrganization = catchAsync(async (req, res) => {
+  const organizationId = req.params.id;
+  const options = pick(req.query, ['limit', 'page']);
+
+  const result = await CampaignService.getCampaignsByOrganization(
+    organizationId,
+    options
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: status.OK,
+    message: 'Organization campaigns retrieved successfully',
+    meta: result.meta,
+    data: result.data,
+  });
+});
+
 export const CampaignController = {
   createCampaign,
   getAllCampaigns,
   deleteCampaign,
+  getCampaignsByOrganization,
+  getSingleCampaign,
 };
