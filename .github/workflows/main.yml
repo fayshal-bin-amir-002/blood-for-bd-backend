@@ -3,7 +3,7 @@ name: Build & Deploy (Blood For BD Backend)
 on: [push, workflow_dispatch]
 
 jobs:
-  install-and_build:
+  build-project:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,3 +20,9 @@ jobs:
 
       - name: build the project
         run: npm run build
+
+  deploy-project:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy project
+        run: echo "Project deploying..."
