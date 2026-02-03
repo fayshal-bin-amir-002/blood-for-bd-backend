@@ -20,7 +20,8 @@ app.use('/api/v1', router);
 
 const getAController = async (req: Request, res: Response) => {
 	res.send({
-		status: 'success',
+		status: 200,
+		success: true,
 		message: 'Blood For BD server is running...',
 	});
 };
