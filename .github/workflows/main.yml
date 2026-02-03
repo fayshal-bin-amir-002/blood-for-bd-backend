@@ -23,6 +23,7 @@ jobs:
 
   deploy-project:
     runs-on: ubuntu-latest
+    needs: build-project
     steps:
       - name: Deploy project
         run: echo "Project deploying..."
