@@ -33,8 +33,9 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           envs: DATABASE_URL,JWT_ACCESS_TOKEN_SECRET,JWT_REFRESH_TOKEN_SECRET,PORT,NODE_ENV,JWT_ACCESS_TOKEN_EXPIRES_IN,JWT_REFRESH_TOKEN_EXPIRES_IN
           script: |
+            source ~/.bashrc
             export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
 
             cd /home/ubuntu/applications/blood-for-bd-backend
             git pull origin main
@@ -42,4 +43,3 @@ jobs:
             npm run build
             pm2 reload ecosystem.config.js || pm2 start ecosystem.config.js
             pm2 save
-            pm2 startup
