@@ -45,15 +45,8 @@ jobs:
           script: |
             cd /home/ubuntu/applications/blood-for-bd-backend
             git pull origin main
-            echo "NODE_ENV=${{ secrets.NODE_ENV }}" > .env
-            echo "PORT=${{ secrets.PORT }}" >> .env
-            echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
-            echo "JWT_ACCESS_TOKEN_SECRET=${{ secrets.JWT_ACCESS_TOKEN_SECRET }}" >> .env
-            echo "JWT_ACCESS_TOKEN_EXPIRES_IN=30d" >> .env
-            echo "JWT_REFRESH_TOKEN_SECRET=${{ secrets.JWT_REFRESH_TOKEN_SECRET }}" >> .env
-            echo "JWT_REFRESH_TOKEN_EXPIRES_IN=365d" >> .env
-            npm install --production
+            npm install
             npm run build
             pm2 delete "blood-for-bd-backend" || true
-            pm2 start dist/server.js --name "blood-for-bd-backend"
+            pm2 start ./dist/server.js --name "blood-for-bd-backend"
             pm2 save
