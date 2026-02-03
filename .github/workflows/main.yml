@@ -15,5 +15,8 @@ jobs:
         with:
           node-version: 24.13.0
 
-      - name: check node version
-        run: node -v
+      - name: install dependencies
+        run: npm install
+
+      - name: build the project
+        run: npm run build
