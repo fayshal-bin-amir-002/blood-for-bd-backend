@@ -278,6 +278,8 @@ const getOrganizationMembers = async (
     },
   });
 
+  console.log(requester);
+
   if (
     !requester ||
     (requester.role !== 'ADMIN' && requester.role !== 'MODERATOR')

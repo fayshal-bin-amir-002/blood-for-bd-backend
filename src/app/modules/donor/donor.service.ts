@@ -1,12 +1,12 @@
-import status from "http-status";
-import { IJwtPayload, jwtHelpers } from "../../../helpers/jwtHelpers";
-import { prisma } from "../../../shared/prisma";
-import ApiError from "../../errors/ApiError";
-import { IDonor, IDonorLocation, IDonorProfile } from "../user/user.interface";
-import { IPaginationOptions } from "../../interfaces/pagination";
-import { calculatePagination } from "../../../helpers/paginationHelper";
-import { Prisma, UserRole } from "@prisma/client";
-import config from "../../../config";
+import status from 'http-status';
+import { IJwtPayload, jwtHelpers } from '../../../helpers/jwtHelpers';
+import { prisma } from '../../../shared/prisma';
+import ApiError from '../../errors/ApiError';
+import { IDonor, IDonorLocation, IDonorProfile } from '../user/user.interface';
+import { IPaginationOptions } from '../../interfaces/pagination';
+import { calculatePagination } from '../../../helpers/paginationHelper';
+import { Prisma, UserRole } from '@prisma/client';
+import config from '../../../config';
 
 const createDonor = async (user: IJwtPayload, payload: IDonor) => {
   const isUserExists = await prisma.user.findUnique({
@@ -16,11 +16,11 @@ const createDonor = async (user: IJwtPayload, payload: IDonor) => {
   });
 
   if (!isUserExists) {
-    throw new ApiError(status.FORBIDDEN, "User not exists!");
+    throw new ApiError(status.FORBIDDEN, 'User not exists!');
   }
 
   if (isUserExists.isBlocked) {
-    throw new ApiError(status.FORBIDDEN, "User is blocked!");
+    throw new ApiError(status.FORBIDDEN, 'User is blocked!');
   }
 
   const isDonorExists = await prisma.donor.findUnique({
@@ -30,7 +30,7 @@ const createDonor = async (user: IJwtPayload, payload: IDonor) => {
   });
 
   if (isDonorExists) {
-    throw new ApiError(status.BAD_REQUEST, "You are already a donor.");
+    throw new ApiError(status.BAD_REQUEST, 'You are already a donor.');
   }
 
   const donorData = {
@@ -107,7 +107,7 @@ const findDonor = async (params: any, options: IPaginationOptions) => {
     skip: skip,
     take: limit,
     orderBy: {
-      createdAt: "desc",
+      createdAt: 'desc',
     },
     select: {
       id: true,
@@ -145,15 +145,15 @@ const getDonorProfile = async (payload: IJwtPayload) => {
   });
 
   if (!user) {
-    throw new ApiError(status.BAD_REQUEST, "User not exists!");
+    throw new ApiError(status.BAD_REQUEST, 'User not exists!');
   }
 
   if (user.isBlocked) {
-    throw new ApiError(status.BAD_REQUEST, "User is blocked!");
+    throw new ApiError(status.BAD_REQUEST, 'User is blocked!');
   }
 
   if (!user.isDonor) {
-    throw new ApiError(status.BAD_REQUEST, "This user not a donor.");
+    throw new ApiError(status.BAD_REQUEST, 'This user not a donor.');
   }
 
   const result = await prisma.donor.findUnique({
@@ -163,11 +163,7 @@ const getDonorProfile = async (payload: IJwtPayload) => {
   });
 
   if (!result) {
-    throw new ApiError(status.BAD_REQUEST, "Donor not exists!");
-  }
-
-  if (!result.isActive) {
-    throw new ApiError(status.BAD_REQUEST, "Donor is blocked!");
+    throw new ApiError(status.BAD_REQUEST, 'Donor not exists!');
   }
 
   return result;
@@ -184,11 +180,11 @@ const updateDonorProfile = async (
   });
 
   if (!isUserExists) {
-    throw new ApiError(status.BAD_REQUEST, "User not exists!");
+    throw new ApiError(status.BAD_REQUEST, 'User not exists!');
   }
 
   if (isUserExists.isBlocked) {
-    throw new ApiError(status.BAD_REQUEST, "User is blocked!");
+    throw new ApiError(status.BAD_REQUEST, 'User is blocked!');
   }
 
   const isDonorExists = await prisma.donor.findUnique({
@@ -198,7 +194,7 @@ const updateDonorProfile = async (
   });
 
   if (!isDonorExists) {
-    throw new ApiError(status.FORBIDDEN, "Donor not found!");
+    throw new ApiError(status.FORBIDDEN, 'Donor not found!');
   }
 
   const result = await prisma.donor.update({
@@ -237,11 +233,11 @@ const updateDonorLocation = async (
   });
 
   if (!isUserExists) {
-    throw new ApiError(status.BAD_REQUEST, "User not exists!");
+    throw new ApiError(status.BAD_REQUEST, 'User not exists!');
   }
 
   if (isUserExists.isBlocked) {
-    throw new ApiError(status.BAD_REQUEST, "User is blocked!");
+    throw new ApiError(status.BAD_REQUEST, 'User is blocked!');
   }
 
   const isDonorExists = await prisma.donor.findUnique({
@@ -251,7 +247,7 @@ const updateDonorLocation = async (
   });
 
   if (!isDonorExists) {
-    throw new ApiError(status.FORBIDDEN, "Donor not found!");
+    throw new ApiError(status.FORBIDDEN, 'Donor not found!');
   }
 
   const result = await prisma.donor.update({
@@ -281,7 +277,7 @@ const updateDonorLocation = async (
 
 const updateDonarActiveStatus = async (
   user: IJwtPayload,
-  payload: { status: "true" | "false" }
+  payload: { status: 'true' | 'false' }
 ) => {
   const { id } = user;
   const isUserExists = await prisma.user.findUnique({
@@ -291,11 +287,11 @@ const updateDonarActiveStatus = async (
   });
 
   if (!isUserExists) {
-    throw new ApiError(status.FORBIDDEN, "User not exists!");
+    throw new ApiError(status.FORBIDDEN, 'User not exists!');
   }
 
   if (isUserExists.isBlocked) {
-    throw new ApiError(status.FORBIDDEN, "User is blocked!");
+    throw new ApiError(status.FORBIDDEN, 'User is blocked!');
   }
 
   const isDonorExists = await prisma.donor.findUnique({
@@ -305,10 +301,10 @@ const updateDonarActiveStatus = async (
   });
 
   if (!isDonorExists) {
-    throw new ApiError(status.FORBIDDEN, "Donor not exists!");
+    throw new ApiError(status.FORBIDDEN, 'Donor not exists!');
   }
 
-  const isDisabled = payload.status === "true";
+  const isDisabled = payload.status === 'true';
 
   const result = await prisma.donor.update({
     where: {

@@ -1,4 +1,4 @@
-import { BloodGroup } from "@prisma/client";
+import { BloodGroup } from '@prisma/client';
 
 export interface RegisterUserPayload {
   phone: string;
@@ -20,6 +20,7 @@ export interface IDonorProfile {
   contact_number: string;
   blood_group: BloodGroup;
   last_donation_date: Date | null;
+  isActive: boolean;
 }
 
 export interface IDonorLocation {

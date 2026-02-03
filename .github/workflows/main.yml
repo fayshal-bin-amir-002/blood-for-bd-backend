@@ -1,0 +1,19 @@
+name: Build & Deploy (Blood For BD Backend)
+
+on: [push, workflow_dispatch]
+
+jobs:
+  install-and_build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: copying the codes
+        uses: actions/checkout@v6
+
+      - name: install node js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.13.0
+
+      - name: check node version
+        run: node -v
