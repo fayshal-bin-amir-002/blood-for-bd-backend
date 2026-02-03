@@ -43,7 +43,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           envs: DATABASE_URL,JWT_ACCESS_TOKEN_SECRET,JWT_REFRESH_TOKEN_SECRET,PORT,NODE_ENV,JWT_ACCESS_TOKEN_EXPIRES_IN,JWT_REFRESH_TOKEN_EXPIRES_IN
           script: |
-            cd /var/www/blood-for-bd-backend
+            cd /home/ubuntu/applications/blood-for-bd-backend
             git pull origin main
             echo "NODE_ENV=${{ secrets.NODE_ENV }}" > .env
             echo "PORT=${{ secrets.PORT }}" >> .env
