@@ -60,30 +60,29 @@ jobs:
 
         run: |
           ssh $EC2_USER@$EC2_HOST "mkdir -p ~/applications"
+
           rsync -avz --delete \
             --exclude ".git" \
             --exclude ".github" \
             --exclude "node_modules" \
             ./ $EC2_USER@$EC2_HOST:/home/ubuntu/applications/blood-for-bd-backend
 
-          ssh $EC2_USER@$EC2_HOST << 'EOF'
-            export PATH="$HOME/.fnm:$HOME/.fnm/current/bin:$PATH"
-            [ -s "$HOME/.fnm/fnm.sh" ] && source "$HOME/.fnm/fnm.sh"
+          # Create .env file on EC2 from GitHub Secrets
+          ssh $EC2_USER@$EC2_HOST "cat > /home/ubuntu/applications/blood-for-bd-backend/.env <<EOF
+          NODE_ENV=$NODE_ENV
+          PORT=$PORT
+          DATABASE_URL=$DATABASE_URL
+          JWT_ACCESS_TOKEN_SECRET=$JWT_ACCESS_TOKEN_SECRET
+          JWT_ACCESS_TOKEN_EXPIRES_IN=$JWT_ACCESS_TOKEN_EXPIRES_IN
+          JWT_REFRESH_TOKEN_SECRET=$JWT_REFRESH_TOKEN_SECRET
+          JWT_REFRESH_TOKEN_EXPIRES_IN=$JWT_REFRESH_TOKEN_EXPIRES_IN
+          EOF"
 
-            cd /home/ubuntu/applications/blood-for-bd-backend
+          # Install production dependencies
+          ssh $EC2_USER@$EC2_HOST "cd /home/ubuntu/applications/blood-for-bd-backend && export PATH=$PATH:/run/user/1000/fnm_multishells/23900_1770200077847/bin && npm install"
 
-            echo "NODE_ENV=$NODE_ENV" > .env
-            echo "PORT=$PORT" >> .env
-            echo "DATABASE_URL=$DATABASE_URL" >> .env
-            echo "JWT_ACCESS_TOKEN_SECRET=$JWT_ACCESS_TOKEN_SECRET" >> .env
-            echo "JWT_ACCESS_TOKEN_EXPIRES_IN=$JWT_ACCESS_TOKEN_EXPIRES_IN" >> .env
-            echo "JWT_REFRESH_TOKEN_SECRET=$JWT_REFRESH_TOKEN_SECRET" >> .env
-            echo "JWT_REFRESH_TOKEN_EXPIRES_IN=$JWT_REFRESH_TOKEN_EXPIRES_IN" >> .env
+          # Stop existing PM2 process if exists
+          ssh $EC2_USER@$EC2_HOST "export PATH=$PATH:/run/user/1000/fnm_multishells/23900_1770200077847/bin && pm2 delete blood-for-bd-backend || true"
 
-            npm ci --omit=dev
-
-            pm2 delete blood-for-bd-backend || true
-
-            pm2 start ./dist/server.js --name blood-for-bd-backend --env production
-            pm2 save
-          EOF
+          # Start application with PM2 using .env
+          ssh $EC2_USER@$EC2_HOST "export PATH=$PATH:/run/user/1000/fnm_multishells/23900_1770200077847/bin && cd /home/ubuntu/applications/blood-for-bd-backend && pm2 start dist/server.js --name blood-for-bd-backend --env production"
