@@ -68,7 +68,7 @@ jobs:
 
           ssh $EC2_USER@$EC2_HOST << 'EOF'
             export PATH="$HOME/.fnm:$HOME/.fnm/current/bin:$PATH"
-            eval "$(fnm env)"
+            [ -s "$HOME/.fnm/fnm.sh" ] && source "$HOME/.fnm/fnm.sh"
 
             cd /home/ubuntu/applications/blood-for-bd-backend
 
@@ -82,6 +82,8 @@ jobs:
 
             npm ci --omit=dev
 
-            pm2 reload blood-for-bd-backend || pm2 start ecosystem.config.cjs --env production
+            pm2 delete blood-for-bd-backend || true
+
+            pm2 start ./dist/server.js --name blood-for-bd-backend --env production
             pm2 save
           EOF
