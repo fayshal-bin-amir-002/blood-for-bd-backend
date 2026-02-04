@@ -47,8 +47,8 @@ jobs:
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
       - name: Deploy to EC2
         env:
-          EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
+          EC2_HOST: ${{ secrets.EC2_HOST }}
 
           NODE_ENV: ${{ secrets.NODE_ENV }}
           PORT: ${{ secrets.PORT }}
@@ -59,13 +59,16 @@ jobs:
           JWT_REFRESH_TOKEN_EXPIRES_IN: ${{ secrets.JWT_REFRESH_TOKEN_EXPIRES_IN }}
 
         run: |
+          ssh $EC2_USER@$EC2_HOST "mkdir -p ~/applications"
           rsync -avz --delete \
             --exclude ".git" \
+            --exclude ".github" \
             --exclude "node_modules" \
             ./ $EC2_USER@$EC2_HOST:/home/ubuntu/applications/blood-for-bd-backend
 
           ssh $EC2_USER@$EC2_HOST << 'EOF'
-            export PATH=$PATH:/usr/bin:/usr/local/bin
+            export PATH="$HOME/.fnm:$HOME/.fnm/current/bin:$PATH"
+            eval "$(fnm env)"
 
             cd /home/ubuntu/applications/blood-for-bd-backend
 
