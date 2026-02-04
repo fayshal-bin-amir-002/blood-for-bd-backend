@@ -22,7 +22,8 @@ const getAController = async (req: Request, res: Response) => {
 	res.send({
 		status: 200,
 		success: true,
-		message: 'Blood For BD server is running...',
+		message: 'Yaa Hoo!!! Blood For BD server is running...',
+		timeStamp: new Date().getTime(),
 	});
 };
 

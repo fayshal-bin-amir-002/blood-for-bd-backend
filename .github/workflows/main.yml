@@ -85,4 +85,4 @@ jobs:
           ssh $EC2_USER@$EC2_HOST "export PATH=$PATH:/run/user/1000/fnm_multishells/23900_1770200077847/bin && pm2 delete blood-for-bd-backend || true"
 
           # Start application with PM2 using .env
-          ssh $EC2_USER@$EC2_HOST "export PATH=$PATH:/run/user/1000/fnm_multishells/23900_1770200077847/bin && cd /home/ubuntu/applications/blood-for-bd-backend && pm2 start dist/server.js --name blood-for-bd-backend --env production"
+          ssh $EC2_USER@$EC2_HOST "export PATH=$PATH:/run/user/1000/fnm_multishells/23900_1770200077847/bin && cd /home/ubuntu/applications/blood-for-bd-backend && pm2 start dist/server.js --name blood-for-bd-backend"
