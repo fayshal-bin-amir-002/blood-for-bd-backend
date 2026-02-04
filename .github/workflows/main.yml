@@ -59,7 +59,7 @@ jobs:
           JWT_REFRESH_TOKEN_EXPIRES_IN: ${{ secrets.JWT_REFRESH_TOKEN_EXPIRES_IN }}
 
         run: |
-          ssh $EC2_USER@$EC2_HOST "mkdir -p ~/applications"
+          ssh $EC2_USER@$EC2_HOST "mkdir -p ~/applications/blood-for-bd-backend"
 
           rsync -avz --delete \
             --exclude ".git" \
